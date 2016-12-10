@@ -22,18 +22,21 @@ grad = zeros(size(theta));
 
 J = sum(- log(sigmoid(X * theta)) .* y - (1 .- y) .* log(1 .- sigmoid(X * theta)) , 1) / m;
 
-
+% ================= non vectorization implementation ==============================
 %auxiliaryTheta = [theta; -1];
 %auxiliaryX = [sigmoid(X),y];
-
-%sigmoid(X * theta) - y
-	
+%sigmoid(X * theta) - y	
 % X * theta - y
 %hypothesisSquareErrorVector = auxiliaryX * auxiliaryTheta;
 
-for j = 1:size(theta)
-	grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1);
-end
+%for j = 1:size(theta)
+%	grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1);
+%end
+
+% =================== end non vectorization implementation =========================
+
+% =============== Vectorization implementation ======================
+grad = (1 / m) .* ((sigmoid(X * theta) - y)' * X);
 
 
 

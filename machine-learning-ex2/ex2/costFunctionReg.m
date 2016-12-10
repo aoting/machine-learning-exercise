@@ -21,13 +21,31 @@ regTheta = theta;
 regTheta(1) = 0;
 J = (sum(- log(sigmoid(X * theta)) .* y - (1 .- y) .* log(1 .- sigmoid(X * theta)) , 1) / m) + lambda / (2 * m) * sum(regTheta .^ 2);
 
-for j = 1:size(theta)
-	if (j != 1)
-		grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1) + lambda / m * theta(j);
-	else
-		grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1);
-	end
-end
+
+% ****************** Vectorization *****************************************
+grad = (sigmoid(X * theta) - y)' * X;
+grad = (1 / m) .* grad + lambda * regTheta' / m;
+
+
+% **************** Previous implementation ********************************************
+%for j = 1:size(theta)
+%	if (j != 1)
+%		grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1) + lambda / m * theta(j);
+%	else
+%		grad(j) = (1 / m) * sum((sigmoid(X * theta) - y) .* X(:, j), 1)(1);
+%	end
+%end
+
+%grad = (1 / m) .* ((sigmoid(X * theta) - y)' * X);
+
+%for j = 1:size(theta)
+%	if (j != 1)
+%		grad(j) = grad(j) + lambda / m * theta(j);
+%	else
+%		grad(j) = grad(j);
+%	end
+%end
+% ****************** End previous implementation ********************************
 
 
 % =============================================================
