@@ -62,8 +62,70 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+%display(size(X));
+%display(size(Theta1));
+%display(size(Theta2));
+
+%=========== Part 1 ========================================================
+X = [ones(m, 1) X];
+z2 = X * Theta1';
+z2 = sigmoid(z2);
+z2 = [ones(size(z2, 1), 1) z2];
+z3 = z2 * Theta2';
+z3 = sigmoid(z3);
+
+logz3 = log(z3);
+logz3minus = log(1 - z3);
+
+outputMatrix = zeros(m, num_labels);
+for i = 1:m
+	outputMatrix(i,y(i)) = 1; 
+end
+
+%==================== Formula for computing cost without regularization ===========================================
+%for i = 1:m
+%	for j = 1:num_labels
+%		J += (outputMatrix(i, j) * logz3(i,j) + (1 - outputMatrix(i,j)) * logz3minus(i,j));
+%	end
+%end
+
+J = sum((outputMatrix .* logz3 + (1 - outputMatrix) .* logz3minus)(:));
+
+J = -J / m;
+
+%==================== End formula for computing cost without regularization ===========================================
+
+regTheta1 = Theta1;
+regTheta1(:,1) = 0;
+regTheta2 = Theta2;
+regTheta2(:,1) = 0;
+regularLambda = (sumsq(regTheta1(:)) + sumsq(regTheta2(:))) * lambda / m / 2;
+
+J += regularLambda;
+
+%=========== End Part 1 ========================================================
 
 
+% ================ Part 2 =======================================
+
+z2 = X * Theta1';
+a2 = sigmoid(z2);
+a2 = [ones(size(z2, 1), 1) a2];
+
+z3 = a2 * Theta2';
+a3 = sigmoid(z3);
+
+delta3 = a3 - outputMatrix;
+
+% ====== For the hidden layer l = 2, set
+delta2 = ((delta3 * Theta2) .* sigmoidGradient([ones(size(z2, 1), 1) z2]));
+delta2 = delta2(:, [2:end]);
+
+Theta2_grad = (Theta2_grad + delta3' * a2) / m;
+Theta1_grad = (Theta1_grad + delta2' * X) / m;
+
+Theta2_grad = Theta2_grad + lambda / m * regTheta2;
+Theta1_grad = Theta1_grad + lambda / m * regTheta1;
 
 
 
