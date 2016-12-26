@@ -23,9 +23,22 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
+C_candidates = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+sigma_candidates = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
 
-
-
+candidatesResult = 1;
+for i = C_candidates
+	for j = sigma_candidates
+		model = svmTrain(X, y, i, @(x1, x2) gaussianKernel(x1, x2, j));
+		predictions = svmPredict(model, Xval);
+		result = mean(double(predictions ~= yval));
+		if (candidatesResult >= mean(double(predictions ~= yval)))
+			C = i;
+			sigma = j;
+			candidatesResult = result;
+		end
+	end
+end
 
 
 
