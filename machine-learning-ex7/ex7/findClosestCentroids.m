@@ -20,7 +20,13 @@ idx = zeros(size(X,1), 1);
 %
 % Note: You can use a for-loop over the examples to compute this.
 %
-
+for i = 1:size(X,1)
+	distance = zeros(1,K);
+	for j = 1:K
+		distance(j) = sum((X(i,:) - centroids(j,:)) .^ 2);
+	end
+	[minValue, idx(i,1)] = min(distance);
+end
 
 
 
